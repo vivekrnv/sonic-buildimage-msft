@@ -1554,7 +1554,6 @@ def parse_xml(filename, platform=None, port_config_file=None, asic_name=None, hw
 
     results = {}
     results['DEVICE_METADATA'] = {'localhost': {
-        'bgp_asn': bgp_asn,
         'region': region,
         'cloudtype': cloudtype,
         'docker_routing_config_mode': docker_routing_config_mode,
@@ -1564,6 +1563,9 @@ def parse_xml(filename, platform=None, port_config_file=None, asic_name=None, hw
         'synchronous_mode': 'enable'
         }
     }
+
+    if bgp_asn:
+        results['DEVICE_METADATA']['localhost']['bgp_asn'] = bgp_asn
 
     if deployment_id is not None:
         results['DEVICE_METADATA']['localhost']['deployment_id'] = deployment_id
