@@ -1,3 +1,11 @@
+{% set use_bookworm_macsec_container = true %}
+
+{% if use_bookworm_macsec_container -%}
+FROM publicmirror.azurecr.io/docker-macsec:202405
+RUN mkdir /etc/fips && echo 1 > /etc/fips/fips_enable
+COPY ["cli", "/cli/"]
+ENTRYPOINT ["/usr/local/bin/supervisord"]
+{% else %}
 {% from "dockers/dockerfile-macros.j2" import install_debian_packages, install_python_wheels, copy_files, cleanup_apt_and_python_cache %}
 FROM docker-config-engine-bullseye-{{DOCKER_USERNAME}}:{{DOCKER_USERTAG}}
 
@@ -27,3 +35,5 @@ COPY ["etc/wpa_supplicant.conf", "/etc/wpa_supplicant.conf"]
 COPY ["cli", "/cli/"]
 
 ENTRYPOINT ["/usr/local/bin/supervisord"]
+
+{%- endif %}
