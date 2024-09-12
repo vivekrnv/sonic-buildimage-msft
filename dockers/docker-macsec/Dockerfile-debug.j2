@@ -1,0 +1,6 @@
+FROM publicmirror.azurecr.io/docker-macsec-dbg:202405
+
+RUN mkdir /etc/fips && echo 1 > /etc/fips/fips_enable
+COPY ["cli", "/cli/"]
+
+ENTRYPOINT ["/usr/local/bin/supervisord"]
