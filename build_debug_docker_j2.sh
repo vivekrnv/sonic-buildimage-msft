@@ -1,5 +1,11 @@
 #! /bin/bash
 
+# Workaround to fix build docker-macsec-dbg issue
+if [[ $1 == docker-macsec* ]]; then
+    cat dockers/docker-macsec/Dockerfile-debug.j2
+    exit 0
+fi
+
 echo "
 FROM $1
 
