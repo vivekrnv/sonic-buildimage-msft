@@ -10,12 +10,14 @@ DEFAULT_SMOOTH_INTERVAL = '10'
 DEFAULT_ALPHA = '0.18'
 
 
-def enable_counter_group(db, name):
+def enable_counter_group(db, name, poll_interval=None):
     entry_info = db.get_entry("FLEX_COUNTER_TABLE", name)
 
     if not entry_info:
         info = {}
         info['FLEX_COUNTER_STATUS'] = 'enable'
+        if poll_interval:
+            info['POLL_INTERVAL'] = poll_interval
         db.mod_entry("FLEX_COUNTER_TABLE", name, info)
     else:
         entry_info.update({"FLEX_COUNTER_DELAY_STATUS":"false"})
@@ -38,12 +40,15 @@ def enable_rates():
 def enable_counters():
     db = swsscommon.ConfigDBConnector()
     db.connect()
+    device_metadata_info = db.get_entry("DEVICE_METADATA", "localhost")
+    
     default_enabled_counters = ['PORT', 'RIF', 'QUEUE', 'PFCWD', 'PG_WATERMARK', 'PG_DROP', 
                                 'QUEUE_WATERMARK', 'BUFFER_POOL_WATERMARK', 'PORT_BUFFER_DROP', 'ACL']
     
     # Enable those default counters
     for key in default_enabled_counters:
-        enable_counter_group(db, key)
+        enable_counter_group(db, key, 
+                             "10000" if key == 'PORT' and 'subtype' in device_metadata_info and device_metadata_info['subtype'] == "Supervisor" else None)
 
     # Set FLEX_COUNTER_DELAY_STATUS to false for those non-default counters
     keys = db.get_keys('FLEX_COUNTER_TABLE')
