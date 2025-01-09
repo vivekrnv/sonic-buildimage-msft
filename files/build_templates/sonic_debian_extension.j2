@@ -393,6 +393,8 @@ sudo cp $IMAGE_CONFIGS/monit/memory_checker $FILESYSTEM_ROOT/usr/bin/
 sudo chmod 755 $FILESYSTEM_ROOT/usr/bin/memory_checker
 sudo cp $IMAGE_CONFIGS/monit/restart_service $FILESYSTEM_ROOT/usr/bin/
 sudo chmod 755 $FILESYSTEM_ROOT/usr/bin/restart_service
+sudo cp $IMAGE_CONFIGS/monit/mgmt_oper_status.py $FILESYSTEM_ROOT/usr/bin/
+sudo chmod 755 $FILESYSTEM_ROOT/usr/bin/mgmt_oper_status.py
 
 # Installed smartmontools version should match installed smartmontools in docker-platform-monitor Dockerfile
 # TODO: are mismatching versions fine for bookworm?
