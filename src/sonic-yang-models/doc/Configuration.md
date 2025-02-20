@@ -95,6 +95,7 @@ Table of Contents
          * [RADIUS](#radius)
          * [Static DNS](#static-dns)
          * [SRv6](#srv6)
+         * [ASIC_SENSORS](#asic_sensors)  
    * [For Developers](#for-developers)
       * [Generating Application Config by Jinja2 Template](#generating-application-config-by-jinja2-template)
       * [Incremental Configuration by Subscribing to ConfigDB](#incremental-configuration-by-subscribing-to-configdb)
@@ -2944,7 +2945,23 @@ The DPUS table introduces the information on the DPUs (Data Processing Unit) ava
 }
 ```
 
-#### 5.2.3 Update value directly in db memory
+### ASIC_SENSORS
+
+The ASIC_SENSORS table introduces the asic sensors polling configuration when they are available on the platform.
+
+```json
+{
+    "ASIC_SENSORS": {
+        "ASIC_SENSORS_POLLER_INTERVAL": {
+            "interval": "10"
+        },
+        "ASIC_SENSORS_POLLER_STATUS": {
+            "admin_status": "enable"
+        }
+    }
+}
+```
+
 
 For Developers
 ==============
