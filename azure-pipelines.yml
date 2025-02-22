@@ -25,11 +25,11 @@ name: $(TeamProject)_$(Build.DefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd
 
 resources:
   repositories:
-  - repository: sonic-mgmt
+  - repository: sonic-mgmt.msft
     type: github
-    name: sonic-net/sonic-mgmt
-    ref: master
-    endpoint: sonic-net
+    name: Azure/sonic-mgmt.msft
+    ref: 202412
+    endpoint: build
   - repository: buildimage
     type: github
     name: sonic-net/sonic-buildimage
@@ -171,12 +171,13 @@ stages:
     timeoutInMinutes: 240
     continueOnError: false
     steps:
-    - template: .azure-pipelines/run-test-elastictest-template.yml@sonic-mgmt
+    - template: .azure-pipelines/run-test-elastictest-template.yml@sonic-mgmt.msft
       parameters:
         TOPOLOGY: t0
         MIN_WORKER: $(T0_INSTANCE_NUM)
         MAX_WORKER: $(T0_INSTANCE_NUM)
         MGMT_BRANCH: $(BUILD_BRANCH)
+        MGMT_URL: "https://raw.githubusercontent.com/Azure/sonic-mgmt.msft"
 
   - job: t0_2vlans_elastictest
     pool: sonic-ubuntu-1c
@@ -184,7 +185,7 @@ stages:
     timeoutInMinutes: 240
     continueOnError: false
     steps:
-    - template: .azure-pipelines/run-test-elastictest-template.yml@sonic-mgmt
+    - template: .azure-pipelines/run-test-elastictest-template.yml@sonic-mgmt.msft
       parameters:
         TOPOLOGY: t0
         TEST_SET: t0-2vlans
@@ -192,6 +193,7 @@ stages:
         MAX_WORKER: $(T0_2VLANS_INSTANCE_NUM)
         MGMT_BRANCH: $(BUILD_BRANCH)
         DEPLOY_MG_EXTRA_PARAMS: "-e vlan_config=two_vlan_a"
+        MGMT_URL: "https://raw.githubusercontent.com/Azure/sonic-mgmt.msft"
 
   - job: t1_lag_elastictest
     pool: sonic-ubuntu-1c
@@ -199,12 +201,13 @@ stages:
     timeoutInMinutes: 240
     continueOnError: false
     steps:
-    - template: .azure-pipelines/run-test-elastictest-template.yml@sonic-mgmt
+    - template: .azure-pipelines/run-test-elastictest-template.yml@sonic-mgmt.msft
       parameters:
         TOPOLOGY: t1-lag
         MIN_WORKER: $(T1_LAG_INSTANCE_NUM)
         MAX_WORKER: $(T1_LAG_INSTANCE_NUM)
         MGMT_BRANCH: $(BUILD_BRANCH)
+        MGMT_URL: "https://raw.githubusercontent.com/Azure/sonic-mgmt.msft"
 
   - job: multi_asic_elastictest
     displayName: "kvmtest-multi-asic-t1-lag by Elastictest"
@@ -212,7 +215,7 @@ stages:
     timeoutInMinutes: 240
     continueOnError: false
     steps:
-      - template: .azure-pipelines/run-test-elastictest-template.yml@sonic-mgmt
+      - template: .azure-pipelines/run-test-elastictest-template.yml@sonic-mgmt.msft
         parameters:
           TOPOLOGY: t1-8-lag
           TEST_SET: multi-asic-t1-lag
@@ -220,6 +223,7 @@ stages:
           MAX_WORKER: $(MULTI_ASIC_INSTANCE_NUM)
           NUM_ASIC: 4
           MGMT_BRANCH: $(BUILD_BRANCH)
+          MGMT_URL: "https://raw.githubusercontent.com/Azure/sonic-mgmt.msft"
 
   - job: dualtor_elastictest
     pool: sonic-ubuntu-1c
@@ -227,13 +231,14 @@ stages:
     timeoutInMinutes: 240
     continueOnError: false
     steps:
-      - template: .azure-pipelines/run-test-elastictest-template.yml@sonic-mgmt
+      - template: .azure-pipelines/run-test-elastictest-template.yml@sonic-mgmt.msft
         parameters:
           TOPOLOGY: dualtor
           MIN_WORKER: $(T0_DUALTOR_INSTANCE_NUM)
           MAX_WORKER: $(T0_DUALTOR_INSTANCE_NUM)
           MGMT_BRANCH: $(BUILD_BRANCH)
           COMMON_EXTRA_PARAMS: "--disable_loganalyzer "
+          MGMT_URL: "https://raw.githubusercontent.com/Azure/sonic-mgmt.msft"
 
   - job: sonic_t0_elastictest
     displayName: "kvmtest-t0-sonic by Elastictest"
@@ -241,7 +246,7 @@ stages:
     timeoutInMinutes: 240
     continueOnError: false
     steps:
-      - template: .azure-pipelines/run-test-elastictest-template.yml@sonic-mgmt
+      - template: .azure-pipelines/run-test-elastictest-template.yml@sonic-mgmt.msft
         parameters:
           TOPOLOGY: t0-64-32
           MIN_WORKER: $(T0_SONIC_INSTANCE_NUM)
@@ -250,6 +255,7 @@ stages:
           MGMT_BRANCH: $(BUILD_BRANCH)
           COMMON_EXTRA_PARAMS: "--neighbor_type=sonic "
           VM_TYPE: vsonic
+          MGMT_URL: "https://raw.githubusercontent.com/Azure/sonic-mgmt.msft"
 
   - job: dpu_elastictest
     displayName: "kvmtest-dpu by Elastictest"
@@ -257,73 +263,10 @@ stages:
     continueOnError: false
     pool: sonic-ubuntu-1c
     steps:
-      - template: .azure-pipelines/run-test-elastictest-template.yml@sonic-mgmt
+      - template: .azure-pipelines/run-test-elastictest-template.yml@sonic-mgmt.msft
         parameters:
           TOPOLOGY: dpu
           MIN_WORKER: $(T0_SONIC_INSTANCE_NUM)
           MAX_WORKER: $(T0_SONIC_INSTANCE_NUM)
           MGMT_BRANCH: $(BUILD_BRANCH)
-
-  - job: onboarding_elastictest_t0
-    displayName: "onboarding t0 testcases by Elastictest - optional"
-    timeoutInMinutes: 240
-    continueOnError: true
-    pool: sonic-ubuntu-1c
-    steps:
-      - template: .azure-pipelines/run-test-elastictest-template.yml@sonic-mgmt
-        parameters:
-          TOPOLOGY: t0
-          STOP_ON_FAILURE: "False"
-          RETRY_TIMES: 0
-          MIN_WORKER: $(T0_ONBOARDING_SONIC_INSTANCE_NUM)
-          MAX_WORKER: $(T0_ONBOARDING_SONIC_INSTANCE_NUM)
-          KVM_IMAGE_BRANCH: $(BUILD_BRANCH)
-          MGMT_BRANCH: $(BUILD_BRANCH)
-          TEST_SET: onboarding_t0
-
-  - job: onboarding_elastictest_t1
-    displayName: "onboarding t1 testcases by Elastictest - optional"
-    timeoutInMinutes: 240
-    continueOnError: true
-    pool: sonic-ubuntu-1c
-    steps:
-      - template: .azure-pipelines/run-test-elastictest-template.yml@sonic-mgmt
-        parameters:
-          TOPOLOGY: t1-lag
-          STOP_ON_FAILURE: "False"
-          RETRY_TIMES: 0
-          MIN_WORKER: $(T1_LAG_ONBOARDING_INSTANCE_NUM)
-          MAX_WORKER: $(T1_LAG_ONBOARDING_INSTANCE_NUM)
-          KVM_IMAGE_BRANCH: $(BUILD_BRANCH)
-          MGMT_BRANCH: $(BUILD_BRANCH)
-          TEST_SET: onboarding_t1
-
-#  - job: onboarding_elastictest_dualtor
-#    displayName: "onboarding dualtor testcases by Elastictest - optional"
-#    timeoutInMinutes: 240
-#    continueOnError: true
-#    pool: sonic-ubuntu-1c
-#    steps:
-#      - template: .azure-pipelines/run-test-elastictest-template.yml@sonic-mgmt
-#        parameters:
-#          TOPOLOGY: dualtor
-#          STOP_ON_FAILURE: "False"
-#          RETRY_TIMES: 0
-#          MIN_WORKER: $(T0_DUALTOR_INSTANCE_NUM)
-#          MAX_WORKER: $(T0_DUALTOR_INSTANCE_NUM)
-#          KVM_IMAGE_BRANCH: $(BUILD_BRANCH)
-#          MGMT_BRANCH: $(BUILD_BRANCH)
-#          TEST_SET: onboarding_dualtor
-
-#  - job: wan_elastictest
-#    displayName: "kvmtest-wan by Elastictest"
-#    pool: sonic-ubuntu-1c
-#    timeoutInMinutes: 240
-#    continueOnError: false
-#    steps:
-#      - template: .azure-pipelines/run-test-scheduler-template.yml
-#        parameters:
-#          TOPOLOGY: wan-pub
-#          MIN_WORKER: $(WAN_INSTANCE_NUM)
-#          MAX_WORKER: $(WAN_INSTANCE_NUM)
-#          COMMON_EXTRA_PARAMS: "--skip_sanity "
+          MGMT_URL: "https://raw.githubusercontent.com/Azure/sonic-mgmt.msft"
