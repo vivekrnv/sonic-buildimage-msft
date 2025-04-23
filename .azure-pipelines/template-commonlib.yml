@@ -3,8 +3,6 @@ parameters:
   type: object
   default:
     - amd64
-    - armhf
-    - arm64
 
 jobs:
 - ${{ each arch in parameters.archs }}:
